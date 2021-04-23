@@ -1,0 +1,115 @@
+<body></body>
+<script src="/lib/three.js"></script>
+<script>
+  // The "scene" is where stuff in our game will happen:
+  var scene = new THREE.Scene();
+  var flat = {flatShading: true};
+  var light = new THREE.AmbientLight('white', 0.8);
+  scene.add(light);
+
+  // The "camera" is what sees the stuff:
+  var aspectRatio = window.innerWidth / window.innerHeight;
+  var camera = new THREE.PerspectiveCamera(75, aspectRatio, 1, 10000);
+  camera.position.z = 1000;
+  camera.position.y= 500;  
+  scene.add(camera);
+
+  // The "renderer" draws what the camera sees onto the screen:
+  var renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // ******** START CODING ON THE NEXT LINE ********
+// marcador
+var marcador = new THREE.Object3D();
+scene.add(marcador)
+
+// cuerpo
+var body= new THREE.SphereGeometry(100);
+var cover= new THREE.MeshNormalMaterial(flat);
+var avatar = new THREE.Mesh (body, cover);
+marcador.add(avatar);
+marcador.add(camera);
+//manos    
+var hand= new THREE.SphereGeometry(50);
+var rightHand= new THREE.MeshNormalMaterial(flat);
+var rightHand= new THREE.Mesh (hand, rightHand);
+rightHand.position.set(-150,0,0);
+avatar.add(rightHand);
+    
+var leftHand= new THREE.MeshNormalMaterial(flat);
+var leftHand= new THREE.Mesh (hand, leftHand);
+leftHand.position.set(150,0,0);
+avatar.add(leftHand);
+//pie
+var foot= new THREE.SphereGeometry(50);
+var rightFoot= new THREE.Mesh (foot, cover);
+rightFoot.position.set(-75,-125,0);
+avatar.add(rightFoot);
+    
+var leftFoot= new THREE.Mesh (foot, cover);
+leftFoot.position.set(75,-125,0);
+avatar.add(leftFoot);
+
+var isCartwheeling = false;
+function animate() {
+    requestAnimationFrame(animate);
+    if (isCartwheeling) {
+        avatar.rotation.z = avatar.rotation.z + 0.05;
+    }
+    renderer.render(scene, camera);
+}
+animate();
+
+var girar = true;
+    
+function animate() {
+    requestAnimationFrame(animate);
+    if (girar) {
+      avatar.rotation.z = avatar.rotation.z + 0.05;
+    }
+    renderer.render(scene, camera);
+}
+
+animate();
+
+function CrearArbol(x,z) { 
+    var tronco = new THREE.CylinderGeometry(50,50,200);
+    var marron = new THREE.MeshBasicMaterial({color:'sienna'});
+    var tronco_marron= new THREE.Mesh(tronco, marron);
+    
+    var copa = new THREE.SphereGeometry(150);
+    var verde = new THREE.MeshBasicMaterial({color: 'forestgreen'});
+    var copa_verde = new THREE.Mesh(copa, verde)
+    
+    tronco_marron.position.set(x,-75,z);
+    
+
+    copa_verde.position.y = 175;
+    tronco_marron.add(copa_verde);
+    scene.add(tronco_marron);
+}
+
+CrearArbol(0,0);
+   var cantidad= 6;
+function HacerArbol(cantidad){
+    for(var i =1; i<cantidad; i++){
+        CrearArbol((Math.random()*500)-2500,-Math.random()*3000);
+    }
+}
+HacerArbol(50,50);
+
+document.addEventListener('keydown', gestionartecla);
+function gestionartecla (evento){
+    var codigo = evento.code;
+    if (codigo == 'ArrowLeft') avatar.position.x = avatar.position.x-10;
+    if (codigo == 'ArrowRight') avatar.position.x = avatar.position.x+10;
+    if (codigo == 'ArrowUp') avatar.position.z = avatar.position.z+10;
+    if (codigo == 'ArrowDown') avatar.position.z = avatar.position.z-10;
+    if (codigo == 'Space') {
+        girar=!girar;
+    }
+}
+  // Now, show what the camera sees on the screen:
+  renderer.render(scene, camera);
+</script>
